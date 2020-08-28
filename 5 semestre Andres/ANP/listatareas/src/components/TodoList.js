@@ -1,10 +1,37 @@
-import React, {useState} from 'react';
-
+import React, {useEffect, useState} from 'react';
+import '../components/Spinner'
+import '../styles/todo-list.css'
+import Spinner from "./Spinner";
 
 const TodoList = () => {
 
     const [task, setTask] = useState([]);
     const [complete, setComplete] = useState([]);
+    const [darkMode, setDarkMode] = React.useState(false);
+    const [userinfo, setUserInfo] = React.useState(null);
+
+    useEffect(() => {
+        console.log('SE MONTO');
+        const getData = async () => {
+            const data = await fetch('https://jsonplaceholder.typicode.com/users/1');
+            const dataJason = await data.json();
+            setUserInfo(dataJason);
+        };
+        getData();
+    }, []);
+
+    useEffect(() => {
+        console.log('efecto', task.length);
+        if (task.length > 0) {
+            document.title = `${task.length}tareas pendientes`;
+        } else {
+            document.title = `No tienes tareas pendientes`;
+        }
+    }, [task]);
+
+    useEffect(() => {
+        console.log('El nuevo estado es:', darkMode ? 'DARK MODE' : 'LIGH MODE')
+    }, [darkMode]);
 
     const handleAddTask = () => {
         const newTask = document.querySelector('#newTask').value;
@@ -33,8 +60,26 @@ const TodoList = () => {
         handleDeleteTask(index)
     }
 
+    const handleAddMode = () => {
+        setDarkMode((prevDarkMode) => !prevDarkMode);
+    }
+
     return (
-        <>
+        <div className={darkMode ? 'dark-mode' : ''}>
+            <div>
+                {
+                    userinfo ?
+                        <ul>
+                            <li>{userinfo.name}</li>
+                            <li>{userinfo.email}</li>
+                            <li>{userinfo.website}</li>
+                            <li>{userinfo.phone}</li>
+                        </ul>
+                        : < Spinner/>
+                }
+            </div>
+
+            <button onClick={handleAddMode}>Cambia modo {darkMode ? 'Claro' : 'Oscuro'}</button>
             <div>
                 <label htmlFor="newTask">Nueva Tarea</label>
                 <input type="text" id='newTask'/>
@@ -86,7 +131,7 @@ const TodoList = () => {
                 </tr>
                 </tbody>
             </table>
-        </>
+        </div>
     );
 }
 

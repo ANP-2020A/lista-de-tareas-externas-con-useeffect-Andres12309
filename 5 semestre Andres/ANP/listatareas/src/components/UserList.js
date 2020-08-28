@@ -53,6 +53,7 @@ const UserList = (props) => {
 
                 <button onClick={handleAddUser}>Agregar</button>
             </div>
+            <h1>Numero de usuarios {users.length}</h1>
             <div>
                 {
                     users.map((user, index) => {
