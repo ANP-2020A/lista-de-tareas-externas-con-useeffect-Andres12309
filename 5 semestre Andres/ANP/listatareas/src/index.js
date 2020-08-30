@@ -22,7 +22,7 @@ const users = [
 
 ReactDOM.render(
     <React.StrictMode>
-        <App users={users}/>
+        <App />
     </React.StrictMode>,
     document.getElementById('root')
 );

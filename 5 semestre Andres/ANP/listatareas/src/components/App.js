@@ -2,13 +2,12 @@ import React, {useState} from 'react';
 import logo from '../images/logo.svg';
 import '../styles/App.css';
 import UserList from "./UserList";
-import TodoList from "./TodoList";
+import TaskList from "./TaskList";
 
 
-const App = (props) => (
+const App = () => (
     <>
-        <UserList users={props.users}/>
-        <TodoList/>
+        <TaskList/>
     </>
 )
 

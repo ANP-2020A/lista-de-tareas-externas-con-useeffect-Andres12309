@@ -1,66 +1,77 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import App from "./App";
+import Spinner from "./Spinner";
+import UserTaskForm from "./UserTaskForm";
 
 
-const UserList = (props) => {
-    const funcioncompleja = () => {
-        return [
-            {
-                firstName: 'Andres',
-                lastName: 'Proaño'
-            },
-            {
-                firstName: 'Juan',
-                lastName: 'Lopez'
-            },
-            {
-                firstName: 'Marco',
-                lastName: 'Paredes'
-            }
-        ];
-    };
-    const [users, setUsers] = useState(props.users);
+const UserList = () => {
+    const [userinfo, setUserInfo] = useState(null);
+    const [userId, setUserId] = useState(1);
+    const [userTask, setUserTask] = useState([]);
 
-    const formatName = (user) => {
-        return user.firstName + ' ' + user.lastName;
-    }
 
-    const handleAddUser = () => {
-        const firstName = document.querySelector('#firstName').value;
-        const lastName = document.querySelector('#lastName').value;
-
-        const newUser = {
-            firstName,
-            lastName
+    useEffect(() => {
+        console.log('SE MONTO');
+        const getUser = async () => {
+            const data = await fetch('https://jsonplaceholder.typicode.com/users/' + userId);
+            const dataJason = await data.json();
+            setUserInfo(dataJason);
         };
-        setUsers((prevState) => {
-            return [
-                ...prevState,
-                newUser
-            ];
-        });
+        getUser();
+        const getTask = async () => {
+            const task = await fetch('https://jsonplaceholder.typicode.com/users/' + userId + '/todos');
+            const taskJson = await task.json();
+            console.log('Tasks', taskJson)
+            setUserTask(taskJson);
+        };
+        getTask();
+    }, [userId]);
+
+    const handlebeforeUser = () => {
+        setUserId(userId - 1);
+    }
+    const handlenextUser = () => {
+
+        setUserId(userId + 1);
     }
 
 
     return (
         <>
             <div>
-                <label htmlFor='firstName'>Nombre</label>
-                <input type='text' id='firstName'/>
-
-                <label htmlFor='lastName'>Apellido</label>
-                <input type='text' id='lastName'/>
-
-                <button onClick={handleAddUser}>Agregar</button>
+                {
+                    userId > 1 &&
+                    <button onClick={handlebeforeUser}>Anterior usuario</button>
+                }
+                {
+                    userId < 10 &&
+                    <button onClick={handlenextUser}>Siguiente usuario</button>
+                }
             </div>
-            <h1>Numero de usuarios {users.length}</h1>
+            <h1>Informacion del Usuario</h1>
             <div>
                 {
-                    users.map((user, index) => {
-                        return <li key={`user-${index}`}>{formatName(user)}</li>
+                    userinfo ?
+                        <ul>
+                            <li><strong>Nombre: </strong> { userinfo.name }</li>
+                            <li><strong>Usuario: </strong> { userinfo.username }</li>
+                            <li><strong>Email: </strong> { userinfo.email }</li>
+                            <li><strong>Web: </strong> { userinfo.website }</li>
+                            <li><strong>Teléfono: </strong> { userinfo.phone }</li>
+                        </ul>
+                        : < Spinner/>
+                }
+            </div>
+            <br/>
+            <br/>
+            <div>
+                {
+                    userTask.map((userTask, index) => {
+                        return <li key={`_-${index}`}>{userTask.title}</li>
                     })
                 }
             </div>
+
         </>
     );
 }
